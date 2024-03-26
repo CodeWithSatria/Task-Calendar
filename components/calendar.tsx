@@ -24,11 +24,23 @@ export default function Home() {
       { title: 'event 4', id: '4' },
       { title: 'event 5', id: '5' },
     ])
-    
+
   const [allEvents, setAllEvents] = useState<Event[]>(() => {
-    const storedEvents = localStorage.getItem('events');
+    // Initialize with the events stored in local storage or an empty array if none exists
+    if (typeof window !== 'undefined') {
+      const storedEvents = localStorage.getItem('events');
       return storedEvents ? JSON.parse(storedEvents) : [];
-  })
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('events', JSON.stringify(allEvents));
+    }
+  }, [allEvents]);
+
+
   const [showModal, setShowModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [idToDelete, setIdToDelete] = useState<number | null>(null)
@@ -109,9 +121,6 @@ export default function Home() {
 
 
   // Update local storage whenever the events state changes
-  useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(allEvents));
-  }, [allEvents]);
 
 
   return (
