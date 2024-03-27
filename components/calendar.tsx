@@ -12,6 +12,7 @@ import { Dialog, Transition } from '@headlessui/react'
 interface Event {
   title: string;
   start: Date | string;
+  end: Date | string;
   allDay: boolean;
   id: number;
 }
@@ -25,20 +26,16 @@ export default function Home() {
       { title: 'event 5', id: '5' },
     ])
 
-  const [allEvents, setAllEvents] = useState<Event[]>(() => {
-    // Initialize with the events stored in local storage or an empty array if none exists
-    if (typeof window !== 'undefined') {
+    const [allEvents, setAllEvents] = useState<Event[]>(() => {
+      // Initialize with the events stored in local storage or an empty array if none exists
       const storedEvents = localStorage.getItem('events');
       return storedEvents ? JSON.parse(storedEvents) : [];
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
+    });
+  
+    // Update local storage whenever the events state changes
+    useEffect(() => {
       localStorage.setItem('events', JSON.stringify(allEvents));
-    }
-  }, [allEvents]);
+    }, [allEvents]);
 
 
   const [showModal, setShowModal] = useState(false)
@@ -47,6 +44,7 @@ export default function Home() {
   const [newEvent, setNewEvent] = useState<Event>({
     title: '',
     start: '',
+    end: '',
     allDay: false,
     id: 0
   })
@@ -60,6 +58,7 @@ export default function Home() {
             let title = eventEl.getAttribute("title")
             let id = eventEl.getAttribute("data")
             let start = eventEl.getAttribute("start")
+            let end = eventEl.getAttribute("end")
             return { title, id, start }
           }
         })
@@ -67,12 +66,12 @@ export default function Home() {
     }, [])
 
   function handleDateClick(arg: { date: Date, allDay: boolean }) {
-    setNewEvent({ ...newEvent, start: arg.date, allDay: arg.allDay, id: new Date().getTime() })
+    setNewEvent({ ...newEvent, start: arg.date, end: arg.date, allDay: arg.allDay, id: new Date().getTime() })
     setShowModal(true)
   }
 
   function addEvent(data: DropArg) {
-    const event = { ...newEvent, start: data.date.toISOString(), title: data.draggedEl.innerText, allDay: data.allDay, id: new Date().getTime() }
+    const event = { ...newEvent, start: data.date.toISOString(), end: data.date.toISOString(), title: data.draggedEl.innerText, allDay: data.allDay, id: new Date().getTime() }
     setAllEvents([...allEvents, event])
   }
 
@@ -92,11 +91,27 @@ export default function Home() {
     setNewEvent({
       title: '',
       start: '',
+      end: '',
       allDay: false,
       id: 0
     })
     setShowDeleteModal(false)
     setIdToDelete(null)
+  }
+
+  function updateEventDates(eventId: number, newStart: Date | null, newEnd: Date | null) {
+    const updatedEvents = allEvents.map(event => {
+      if (Number(event.id) === eventId) {
+        return {
+          ...event,
+          start: newStart ? newStart.toISOString() : event.start,
+          end: newEnd ? newEnd.toISOString() : event.end
+        };
+      }
+      return event;
+    });
+    setAllEvents(updatedEvents);
+    localStorage.setItem('events', JSON.stringify(updatedEvents));
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -113,14 +128,11 @@ export default function Home() {
     setNewEvent({
       title: '',
       start: '',
+      end: '',
       allDay: false,
       id: 0
     })
   }
-
-
-
-  // Update local storage whenever the events state changes
 
 
   return (
@@ -148,13 +160,15 @@ export default function Home() {
               dateClick={handleDateClick}
               drop={(data) => addEvent(data)}
               eventClick={(data) => handleDeleteModal(data)}
+              eventResize={(data) => updateEventDates(Number(data.event.id), data.event.start, data.event.end)}
+              eventDrop={(data) => updateEventDates(Number(data.event.id), data.event.start, data.event.end)}
             />
           </div>
           <div id="draggable-el" className="ml-8 w-full border-2 p-2 rounded-md mt-16 lg:h-1/2 bg-violet-50">
             <h1 className="font-bold text-lg text-center">Drag Event</h1>
             {events.map(event => (
               <div
-                className="fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white"
+                className="fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white cursor-pointer"
                 title={event.title}
                 key={event.id}
               >
@@ -268,14 +282,14 @@ export default function Home() {
                             <input type="text" name="title" className="block w-full rounded-md border-0 py-1.5 text-gray-900 
                             shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                             focus:ring-2 
-                            focus:ring-inset focus:ring-violet-600 
+                            focus:ring-inset focus:ring-black
                             sm:text-sm sm:leading-6"
                               value={newEvent.title} onChange={(e) => handleChange(e)} placeholder="Title" />
                           </div>
                           <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                             <button
                               type="submit"
-                              className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:col-start-2 disabled:opacity-25"
+                              className="inline-flex w-full justify-center rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:col-start-2 disabled:opacity-25"
                               disabled={newEvent.title === ''}
                             >
                               Create
