@@ -28,13 +28,17 @@ export default function Home() {
 
     const [allEvents, setAllEvents] = useState<Event[]>(() => {
       // Initialize with the events stored in local storage or an empty array if none exists
-      const storedEvents = localStorage.getItem('events');
-      return storedEvents ? JSON.parse(storedEvents) : [];
+      if (typeof window !== 'undefined') {
+        const storedEvents = localStorage.getItem('events');
+        return storedEvents ? JSON.parse(storedEvents) : [];
+      }
+      return [];
     });
   
-    // Update local storage whenever the events state changes
     useEffect(() => {
-      localStorage.setItem('events', JSON.stringify(allEvents));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('events', JSON.stringify(allEvents));
+      }
     }, [allEvents]);
 
 
