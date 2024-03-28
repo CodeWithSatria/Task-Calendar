@@ -14,26 +14,28 @@ interface Event {
   start: Date | string;
   end: Date | string;
   allDay: boolean;
-  id: number;
+  id: number; 
 }
 
 export default function Home() {
     const [events, setEvents] = useState([
-      { title: 'event 1', id: '1' },
-      { title: 'event 2', id: '2' },
-      { title: 'event 3', id: '3' },
-      { title: 'event 4', id: '4' },
-      { title: 'event 5', id: '5' },
+      { title: 'Ulang Tahun', id: '1' },
+      { title: 'Hari Raya', id: '2' },
+      { title: 'Libur Sekolah', id: '3' },
+      { title: 'Ngumpul', id: '4' },
+      { title: 'WFH', id: '5' },
+      { title: 'WFO', id: '6' },
     ])
 
     const [allEvents, setAllEvents] = useState<Event[]>(() => {
-      // Initialize with the events stored in local storage or an empty array if none exists
+      
       if (typeof window !== 'undefined') {
         const storedEvents = localStorage.getItem('events');
         return storedEvents ? JSON.parse(storedEvents) : [];
       }
       return [];
     });
+    
   
     useEffect(() => {
       if (typeof window !== 'undefined') {
@@ -137,8 +139,6 @@ export default function Home() {
       id: 0
     })
   }
-
-
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -168,11 +168,11 @@ export default function Home() {
               eventDrop={(data) => updateEventDates(Number(data.event.id), data.event.start, data.event.end)}
             />
           </div>
-          <div id="draggable-el" className="ml-8 w-full border-2 p-2 rounded-md mt-16 lg:h-1/2 bg-violet-50">
-            <h1 className="font-bold text-lg text-center">Drag Event</h1>
+          <div id="draggable-el" className="ml-8 w-[200px] border-2 p-2 rounded-md md:mt-[74px] h-max bg-[#0b2447]">
+            <h1 className="font-bold text-lg text-center text-white">Quick Event</h1>
             {events.map(event => (
               <div
-                className="fc-event border-2 p-1 m-2 w-full rounded-md ml-auto text-center bg-white cursor-pointer"
+                className="fc-event border-2 p-1 m-4 w-[full] h-[55px] rounded-md text-center bg-white cursor-pointer flex items-center justify-center"
                 title={event.title}
                 key={event.id}
               >
@@ -293,17 +293,16 @@ export default function Home() {
                           <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                             <button
                               type="submit"
-                              className="inline-flex w-full justify-center rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:col-start-2 disabled:opacity-25"
+                              className="inline-flex w-full justify-center rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 sm:col-start-2 disabled:opacity-25"
                               disabled={newEvent.title === ''}
-                            >
+                            > 
                               Create
                             </button>
                             <button
                               type="button"
                               className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
                               onClick={handleCloseModal}
-
-                            >
+                              >
                               Cancel
                             </button>
                           </div>

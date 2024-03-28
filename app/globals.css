@@ -9,6 +9,11 @@
 input {
   @apply px-2;
 }
+
+.fc-toolbar-title {
+  font-weight: bold;
+}
+
   .fc-header-toolbar {
     display: inline-block;
     padding: 4px 4px;
@@ -29,26 +34,45 @@ input {
 }
 
 .fc-h-event {
-  @apply bg-violet-500 border border-violet-600 ;
-  
+  @apply bg-[aqua] border border-violet-600;
+  color: black;
+}
+
+.fc-event-title.fc-sticky{
+  color: black
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-  @apply bg-violet-100 ;
+  @apply bg-[#b3ffff] ;
+}
+
+.fc-timeGridDay-button.fc-button.fc-button-primary{
+  text-transform: capitalize;
+}
+
+.fc-timeGridWeek-button.fc-button.fc-button-primary{
+  text-transform: capitalize;
+}
+
+.fc-dayGridMonth-button.fc-button.fc-button-primary{
+  text-transform: capitalize;
 }
 
 .fc .fc-button{
-  @apply bg-violet-800 hover:bg-violet-900  ;
+  @apply bg-[#0B2447] hover:bg-black  ;
+  border: 1px solid black;
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active {
-  @apply bg-violet-600;
+  @apply bg-[#0B2447];
+  text-transform: capitalize;
 }
 
 .fc .fc-button-primary:disabled {
-  @apply bg-violet-600;
+  @apply bg-[#0B2447];
+  text-transform: capitalize;
 }
 .fc-v-event {
-  @apply bg-violet-500 border border-violet-600 ;
+  @apply bg-[#0B2447] border;
   
 }
